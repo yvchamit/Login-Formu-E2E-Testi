@@ -18,15 +18,15 @@ const initialValues = {
   password: "",
 };
 
-const errMsg = {
-  email: "Lutfen gecerli bir email giriniz",
-  password: "En az 8 karakter olmali, Buyuk harf, Sembol ve Rakam icermeli!",
+export const errMsg = {
+  email: "Lütfen geçerli bir e-mail adresi giriniz.",
+  password: "Parola en az 8 karakterden oluşmalı, büyük/küçük harf,\nrakam (0-9) ve özel semboller (örn: ?, !, @, #, %) içermelidir!",
 };
 
 let regex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
 
-export default function Login() {
+export default function Login({ setUsername }) {
 
   const history = useHistory();
 
@@ -81,7 +81,8 @@ export default function Login() {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!isValid) return;
-    history.push('/Success', {username: formData.email});
+    setUsername(formData.email);
+    history.push('/Success');
   };
 
   return (
@@ -99,8 +100,9 @@ export default function Login() {
               onChange={handleChange}
               value={formData.email}
               invalid={errors.email}
+              data-cy="email-input"
             />
-            {errors.email && <FormFeedback>{errMsg.email}</FormFeedback>}
+            {errors.email && <FormFeedback data-cy="error-message">{errMsg.email}</FormFeedback>}
           </FormGroup>
           <FormGroup>
             <Label for="password">Password: </Label>
@@ -112,14 +114,15 @@ export default function Login() {
               onChange={handleChange}
               value={formData.password}
               invalid={errors.password}
+              data-cy="password-input"
             />
-            {errors.password && <FormFeedback>{errMsg.password}</FormFeedback>}
+            {errors.password && <FormFeedback style={{ whiteSpace: "pre-line" }} data-cy="error-message">{errMsg.password}</FormFeedback>}
           </FormGroup>
           <FormGroup check>
-            <Input type="checkbox" onChange={(e) => setTerms(e.target.checked)} />{" "}
+            <Input type="checkbox" disabled={!isValid} onChange={(e) => setTerms(e.target.checked)} data-cy="terms-checkbox"/>{" "}
             <Label check>Şartları ve koşulları kabul ediyorum</Label>
           </FormGroup>
-          <Button type="submit" disabled={!isValid || !terms}>Kayit Ol</Button>
+          <Button type="submit" disabled={!isValid || !terms} data-cy="submit-button">Kayit Ol</Button>
         </Form>
       </CardBody>
     </Card>
